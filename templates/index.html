@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Steem Value</title>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/doximity/vital/v1.2.0/dist/css/vital.min.css">
+    <style type="text/css">
+        .lazy-center {
+            margin-left: 23vw !important;
+        }
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="section">
+            <div class="container">
+                <div id="app" class="full-width-forms">
+                    <h1 class="text-center">Steem Value</h1>
+                    <noscript>Please enable JavaScript for this site to work!</noscript>
+                    <div class="row lazy-center">
+                        <div class="col-1-4">
+                            <input type="text" v-model="from_amount">
+                        </div>
+                        <div class="col-1-4">
+                            <select v-model="from">
+                                <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h3 style="text-align: center">is worth</h3>
+                    </div>
+                    <div class="row lazy-center">
+                        <div class="col-1-4">
+                            <input type="text" v-model="to_amount" readonly>
+                        </div>
+                        <div class="col-1-4">
+                            <select v-model="to">
+                                <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <footer class="row text-center">
+                    <br/><hr/>
+                    <small><a href="/exdata.json">Exchange data</a> is retrieved from a mix of Poloniex and BTC-e</small>
+                    <h2>Built with love by <a href="https://steemit.com/@someguy123">@Someguy123</a></h2>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+    <!-- Released under the GNU AGPL by Someguy123 -->    
+    <script>
+            window.exdata = {{ exdata|safe }};
+
+            function convert() {
+                // try to find a pair
+                var pair = this.from+'_'+this.to, 
+                    pair_reverse = this.to+'_'+this.from;
+                if(this.to == this.from) return 1;
+                if(pair in exdata) {
+                    var price = parseFloat(exdata[pair])
+                        amount = parseFloat(this.from_amount);
+                    console.log(amount);
+                    if (isNaN(amount) || isNaN(price)) return 0;
+                    return (price * amount).toPrecision(4);
+                }
+                if(pair_reverse in exdata) {
+                    var price = parseFloat(exdata[pair_reverse])
+                        amount = parseFloat(this.from_amount);
+                    console.log(amount);
+                    if (isNaN(amount) || isNaN(price)) return 0;
+                    return ((1 / price) * amount).toPrecision(4);
+                }
+                return 0;
+            }
+            new Vue({
+                el: '#app',
+                data: {
+                    currencies: {
+                        'steem': 'STEEM',
+                        'sbd': 'Steem Dollars (SBD)',
+                        'usd': 'USD',
+                        'eur': 'EUR',
+                        'btc': 'BTC'
+                    },
+                    from: 'sbd',
+                    from_amount: 1,
+                    to: "usd"
+                    // to_amount: convert
+                },
+                computed: {
+                    to_amount: convert
+                }
+            })
+        </script>
+</body>
+
+</html>
