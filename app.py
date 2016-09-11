@@ -50,4 +50,4 @@ def exchangedata():
     return jsonify(exchange_data)
 
 if __name__ == '__main__':
-    app.run(debug=os.environ.get('DEBUG', False))
+    app.run(debug=os.environ.get('DEBUG', False), port=int(os.environ.get('PORT', 5000)))
