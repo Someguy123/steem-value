@@ -23,6 +23,12 @@
     margin-top: 2.0833%;
   }
 
+  select {
+    /* override browser styles */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
   .heart {
     display: inline-block;
     height: 16px;
@@ -45,7 +51,7 @@
           </div>
           <div class="col-6">
             <select v-model="from">
-              <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>
+              <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }} &#x25bc;</option>
             </select>
           </div>
         </div>
