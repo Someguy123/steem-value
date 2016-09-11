@@ -1,105 +1,123 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Steem Value</title>
-    <link rel="stylesheet" href="https://cdn.rawgit.com/doximity/vital/v1.2.0/dist/css/vital.min.css">
-    <style type="text/css">
-        .lazy-center {
-            margin-left: 23vw !important;
-        }
-        .text-center {
-            text-align: center;
-        }
-    </style>
+  <title>Steem Value</title>
+  <link rel="stylesheet" href="https://cdn.rawgit.com/KingPixil/wing/master/dist/wing.min.css">
+  <style type="text/css">
+  html, body {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+  }
+  .full-screen {
+    width: auto;
+    height: 95vh;
+  }
+
+  .content {
+    position: relative;
+    top: 45%;
+    transform: translateY(-55%);
+  }
+
+  .worth {
+    margin-top: 2.0833%;
+  }
+
+  .heart {
+    display: inline-block;
+    height: 16px;
+    width: 12px;
+    background: url(data:image/svg+xml,%3Csvg%20width%3D%2212px%22%20height%3D%2216px%22%20viewBox%3D%220%200%2012%2016%22%20version%3D%221.1%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20xmlns%3Axlink%3D%22http%3A//www.w3.org/1999/xlink%22%3E%0A%20%20%20%20%3C%21--%20Generator%3A%20Sketch%203.8.3%20%2829802%29%20-%20http%3A//www.bohemiancoding.com/sketch%20--%3E%0A%20%20%20%20%3Ctitle%3Eheart%3C/title%3E%0A%20%20%20%20%3Cdesc%3ECreated%20with%20Sketch.%3C/desc%3E%0A%20%20%20%20%3Cdefs%3E%3C/defs%3E%0A%20%20%20%20%3Cg%20id%3D%22Octicons%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%20%20%20%20%3Cg%20id%3D%22heart%22%20fill%3D%22%23000000%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M11.2%2C3%20C10.68%2C2.37%209.95%2C2.05%209%2C2%20C8.03%2C2%207.31%2C2.42%206.8%2C3%20C6.29%2C3.58%206.02%2C3.92%206%2C4%20C5.98%2C3.92%205.72%2C3.58%205.2%2C3%20C4.68%2C2.42%204.03%2C2%203%2C2%20C2.05%2C2.05%201.31%2C2.38%200.8%2C3%20C0.28%2C3.61%200.02%2C4.28%200%2C5%20C0%2C5.52%200.09%2C6.52%200.67%2C7.67%20C1.25%2C8.82%203.01%2C10.61%206%2C13%20C8.98%2C10.61%2010.77%2C8.83%2011.34%2C7.67%20C11.91%2C6.51%2012%2C5.5%2012%2C5%20C11.98%2C4.28%2011.72%2C3.61%2011.2%2C2.98%20L11.2%2C3%20Z%22%20id%3D%22Shape%22%3E%3C/path%3E%0A%20%20%20%20%20%20%20%20%3C/g%3E%0A%20%20%20%20%3C/g%3E%0A%3C/svg%3E);
+  }
+  </style>
 </head>
 
 <body>
-    <div class="row">
-        <div class="section">
-            <div class="container">
-                <div id="app" class="full-width-forms">
-                    <h1 class="text-center">Steem Value</h1>
-                    <noscript>Please enable JavaScript for this site to work!</noscript>
-                    <div class="row lazy-center">
-                        <div class="col-1-4">
-                            <input type="text" v-model="from_amount">
-                        </div>
-                        <div class="col-1-4">
-                            <select v-model="from">
-                                <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>                
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <h3 style="text-align: center">is worth</h3>
-                    </div>
-                    <div class="row lazy-center">
-                        <div class="col-1-4">
-                            <input type="text" v-model="to_amount" readonly>
-                        </div>
-                        <div class="col-1-4">
-                            <select v-model="to">
-                                <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <footer class="row text-center">
-                    <br/><hr/>
-                    <small><a href="/exdata.json">Exchange data</a> is retrieved from a mix of Poloniex and BTC-e</small>
-                    <h2>Built with love by <a href="https://steemit.com/@someguy123">@Someguy123</a></h2>
-                </footer>
-            </div>
+  <div class="full-screen">
+    <div class="content">
+      <h1 class="text-center"><strong>Steem</strong>Value</h1>
+      <p class="text-center">A simple converter for STEEM and other currencies.</p>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-6">
+            <input type="text" v-model="from_amount">
+          </div>
+          <div class="col-6">
+            <select v-model="from">
+              <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>
+            </select>
+          </div>
         </div>
+
+        <div class="row">
+          <div class="col-12 horizontal-align worth">
+            <strong>is worth</strong>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <input type="text" v-model="to_amount" readonly>
+          </div>
+          <div class="col-6">
+            <select v-model="to">
+              <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="text-center"><a href="/exdata.json">Exchange data</a> is retrieved from Poloniex and BTC-e no more than 5 minutes ago</p>
+        <p class="text-center">Crafted with <span class="heart"></span> by <a href="https://steemit.com/@someguy123">@Someguy123</a><!-- and designed by <a href="#">novium</a>--></p>
+      </div>
     </div>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
-    <!-- Released under the GNU AGPL by Someguy123 -->    
-    <script>
-            window.exdata = {{ exdata|safe }};
-
-            function convert() {
-                // try to find a pair
-                var pair = this.from+'_'+this.to, 
-                    pair_reverse = this.to+'_'+this.from;
-                if(this.to == this.from) return 1;
-                if(pair in exdata) {
-                    var price = parseFloat(exdata[pair])
-                        amount = parseFloat(this.from_amount);
-                    console.log(amount);
-                    if (isNaN(amount) || isNaN(price)) return 0;
-                    return (price * amount).toPrecision(4);
-                }
-                if(pair_reverse in exdata) {
-                    var price = parseFloat(exdata[pair_reverse])
-                        amount = parseFloat(this.from_amount);
-                    console.log(amount);
-                    if (isNaN(amount) || isNaN(price)) return 0;
-                    return ((1 / price) * amount).toPrecision(4);
-                }
-                return 0;
-            }
-            new Vue({
-                el: '#app',
-                data: {
-                    currencies: {
-                        'steem': 'STEEM',
-                        'sbd': 'Steem Dollars (SBD)',
-                        'usd': 'USD',
-                        'eur': 'EUR',
-                        'btc': 'BTC'
-                    },
-                    from: 'sbd',
-                    from_amount: 1,
-                    to: "usd"
-                    // to_amount: convert
-                },
-                computed: {
-                    to_amount: convert
-                }
-            })
-        </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+  <!-- Released under the GNU AGPL by Someguy123 -->
+  <script>
+  window.exdata = {{ exdata|safe }};
+  function convert() {
+    // try to find a pair
+    var pair = this.from+'_'+this.to,
+    pair_reverse = this.to+'_'+this.from;
+    if(this.to == this.from) return 1;
+    if(pair in exdata) {
+      var price = parseFloat(exdata[pair])
+      amount = parseFloat(this.from_amount);
+      console.log(amount);
+      if (isNaN(amount) || isNaN(price)) return 0;
+      return (price * amount).toPrecision(4);
+    }
+    if(pair_reverse in exdata) {
+      var price = parseFloat(exdata[pair_reverse])
+      amount = parseFloat(this.from_amount);
+      console.log(amount);
+      if (isNaN(amount) || isNaN(price)) return 0;
+      return ((1 / price) * amount).toPrecision(4);
+    }
+    return 0;
+  }
+  new Vue({
+    el: '#app',
+    data: {
+      currencies: {
+        'steem': 'STEEM',
+        'sbd': 'Steem Dollars (SBD)',
+        'usd': 'USD',
+        'eur': 'EUR',
+        'btc': 'BTC'
+      },
+      from: 'sbd',
+      from_amount: 1,
+      to: "usd"
+      // to_amount: convert
+    },
+    computed: {
+      to_amount: convert
+    }
+  })
+  </script>
 </body>
 
 </html>
