@@ -34,7 +34,7 @@
 
 <body>
   <div class="full-screen">
-    <div class="content">
+    <div class="content" id="app">
       <h1 class="text-center"><strong>Steem</strong>Value</h1>
       <p class="text-center">A simple converter for STEEM and other currencies.</p>
 
@@ -77,6 +77,7 @@
   <!-- Released under the GNU AGPL by Someguy123 -->
   <script>
   window.exdata = {{ exdata|safe }};
+  window.currencies = {{ currencies|safe }}
   function convert() {
     // try to find a pair
     var pair = this.from+'_'+this.to,
@@ -101,13 +102,7 @@
   new Vue({
     el: '#app',
     data: {
-      currencies: {
-        'steem': 'STEEM',
-        'sbd': 'Steem Dollars (SBD)',
-        'usd': 'USD',
-        'eur': 'EUR',
-        'btc': 'BTC'
-      },
+      currencies: currencies,
       from: 'sbd',
       from_amount: 1,
       to: "usd"

@@ -18,7 +18,7 @@ def get_or_set(key, func, serialize=None):
     c = cache.get(key)
     if c is None:
         data = func()
-        print('setting key: ', key, data)
+        # print('setting key: ', key, data)
         if serialize == 'object': dataser = json.dumps(data)
         if serialize == 'decimal': dataser = str(data)
         cache.set(key, dataser)
@@ -28,6 +28,8 @@ def get_or_set(key, func, serialize=None):
     return c
 
 class CacheAdapter(object):
+    s = requests.session()
+    
     def get_price(self, pair):
         self.pair = pair
         return get_or_set('price:'+pair, self._get_cache_price, 'decimal')
@@ -40,8 +42,6 @@ class CacheAdapter(object):
 
 
 class PoloniexAdapter(CacheAdapter):
-    s = requests.session()
-
     def _get_price(self, pair):
         pair = self.pair
         pair = pair.upper()
@@ -59,8 +59,6 @@ class PoloniexAdapter(CacheAdapter):
 
 
 class BTCEAdapter(CacheAdapter):
-    s = requests.session()
-
     def _get_price(self, pair):
         if pair.split('_')[1] not in ['usd', 'eur', 'gbp', 'rub']:
             # btc-e is backwards for altcoins, so flip the pair!
@@ -71,10 +69,19 @@ class BTCEAdapter(CacheAdapter):
         j = r.json()
         if 'ticker' in j and 'last' in j['ticker']:
             return Decimal(str(j['ticker']['last']))
-        print(j)
         raise Exception('error reading ticker data from btc-e')
 
-
+class HuobiAdapter(CacheAdapter):
+    def _get_price(self, pair):
+        p = pair.split('_')
+        if p[0] != 'cny': raise PairNotFound('Huobi only does CNY')
+        ticker_url = 'https://api.huobi.com/staticmarket/ticker_{}_json.js'.format(p[1])
+        r = self.s.get(ticker_url)
+        j = r.json()
+        if 'ticker' in j and 'last' in j['ticker']:
+            return Decimal(str(j['ticker']['last']))
+        raise Exception('error reading ticker data from huobi')
+             
 # avoid initializing an adapter more than once
 ADAPTERS = {}
 
@@ -86,7 +93,8 @@ PAIRS = {
     'btc_ltc': BTCEAdapter,
     'btc_eth': BTCEAdapter,
     'btc_sbd': PoloniexAdapter,
-    'btc_steem': PoloniexAdapter
+    'btc_steem': PoloniexAdapter,
+    'cny_btc': HuobiAdapter
 }
 
 
@@ -152,7 +160,6 @@ def get_target_value(coin, target='usd') -> Decimal:
     btc_price = get_pair_value(pair_btc)
     # step 2, times that by the target pair price
     btc_target_price = get_pair_value(target_btc)
-    print((Decimal('1') / btc_price) * btc_target_price)
     return (Decimal('1') / btc_price) * btc_target_price
 
 

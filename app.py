@@ -14,26 +14,37 @@ app = Flask(__name__)
 last_update = datetime.utcnow()
 exchange_data = {}
 
+currencies = {
+    'btc': 'Bitcoin',
+    'sbd': 'Steem Dollars (SBD)',
+    'steem': 'STEEM',
+    'ltc': 'LTC',
+    'usd': 'USD',
+    'eur': 'EUR',
+    'cny': 'Chinese Yuan (CNY)'
+}
+
 def get_exchange_data(expire_check=True):
     global exchange_data, last_update
     if expire_check and last_update > datetime.utcnow() - timedelta(minutes=5):
         return exchange_data
-    try:
-        gtv = lambda x,y: str(get_target_value(x,y).quantize(Decimal('.0001'), rounding=ROUND_DOWN))
-        exchange_data['sbd_btc'] = gtv('sbd','btc')
-        exchange_data['steem_btc'] = gtv('steem','btc')
-        exchange_data['sbd_usd'] = gtv('sbd','usd')
-        exchange_data['steem_usd'] = gtv('steem','usd')
-        exchange_data['sbd_eur'] = gtv('sbd','eur')
-        exchange_data['steem_eur'] = gtv('steem','eur')
-        exchange_data['steem_sbd'] = gtv('steem','sbd')
-        exchange_data['btc_eur'] = gtv('btc','eur')
-        exchange_data['btc_usd'] = gtv('btc','usd')
-        exchange_data['eur_usd'] = gtv('eur','usd')
-        last_update = datetime.utcnow()
-    except e:
-        print('ERROR: ', type(e), str(e))
-        pass
+    gtv = lambda x,y: str(get_target_value(x,y).quantize(Decimal('.0001'), rounding=ROUND_DOWN))
+    # iterate over the currencies, and build matching pairs for every other
+    # prevents any overlap/duplication, and allows fast currency adding
+    for c in currencies:
+        for p in currencies:
+            if c == p: continue
+            pair = '{}_{}'.format(c,p)
+            rpair = '{}_{}'.format(p,c)
+            if pair in exchange_data or rpair in exchange_data: continue
+            try:
+                exchange_data[pair] = gtv(c,p)
+            except Exception as e:
+                print('ERROR: ', type(e), str(e))
+                continue
+    
+    last_update = datetime.utcnow()
+    
     return exchange_data
     
 # initial query
@@ -42,7 +53,7 @@ get_exchange_data(False)
 @app.route('/')
 def index():
     get_exchange_data()
-    return render_template('index.html', exdata=exchange_data)
+    return render_template('index.html', exdata=exchange_data, currencies=currencies)
 
 @app.route('/exdata.json')
 def exchangedata():
