@@ -26,7 +26,8 @@ currencies = {
 
 def get_exchange_data(expire_check=True):
     global exchange_data, last_update
-    if expire_check and last_update > datetime.utcnow() - timedelta(minutes=5):
+    expire_date = last_update + timedelta(minutes=5)
+    if expire_check and expire_date < datetime.utcnow():
         return exchange_data
     gtv = lambda x,y: str(get_target_value(x,y).quantize(Decimal('.0001'), rounding=ROUND_DOWN))
     # iterate over the currencies, and build matching pairs for every other
