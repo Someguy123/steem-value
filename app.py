@@ -37,7 +37,10 @@ def get_exchange_data(expire_check=True):
             if c == p: continue
             pair = '{}_{}'.format(c,p)
             rpair = '{}_{}'.format(p,c)
-            if pair in exchange_data or rpair in exchange_data: continue
+            # if there's a reversed pair, then we should
+            # just skip this. If we're updating, that pair 
+            # can do it's own thing
+            if rpair in exchange_data: continue
             try:
                 exchange_data[pair] = gtv(c,p)
             except Exception as e:
