@@ -109,6 +109,14 @@
           </div>
         </div>
 
+        <div style="float:right">
+            <strong>{{ '{{ from_amount }}' }} {{ '{{ from.toUpperCase() }}' }} is also worth:</strong>
+            <p v-for="(k,v) in to_values">
+                <strong>{{ '{{ currencies[k] }}' }}</strong>
+                {{ '{{ v }}' }}
+            </p>
+        </div>
+
         <p class="text-center"><a href="/exdata.json">Exchange data</a> was retrieved from Poloniex, Huobi and BTC-e no more than 5 minutes ago</p>
         <p class="text-center">Crafted with <span class="heart"></span> by <a href="https://steemit.com/@someguy123">@Someguy123</a><!-- and designed by <a href="#">novium</a>--></p>
       </div>
@@ -124,7 +132,7 @@
     // try to find a pair
     var pair = this.from+'_'+this.to,
     pair_reverse = this.to+'_'+this.from;
-    if(this.to == this.from) return 1;
+    if(this.to == this.from) return this.from_amount;
     if(pair in exdata) {
       var price = parseFloat(exdata[pair])
       amount = parseFloat(this.from_amount);
@@ -141,6 +149,14 @@
     }
     return 0;
   }
+    function convert_all() {
+        var conmap = {}
+        for(var v in currencies) {
+            if (this.from == v) continue;
+            conmap[v] = convert.bind({to: v, from: this.from,from_amount: this.from_amount})()
+        }
+        return conmap
+    }
   new Vue({
     el: '#app',
     data: {
@@ -151,7 +167,8 @@
       // to_amount: convert
     },
     computed: {
-      to_amount: convert
+      to_amount: convert,
+      to_values: convert_all
     }
   })
   </script>

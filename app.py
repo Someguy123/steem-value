@@ -3,6 +3,9 @@ import os
 from datetime import datetime, timedelta
 from exchanges import get_target_value
 from decimal import Decimal, ROUND_DOWN
+from threading import Thread
+from time import sleep
+
 app = Flask(__name__)
 
 #
@@ -51,15 +54,19 @@ def get_exchange_data(expire_check=True):
                 continue
     
     last_update = datetime.utcnow()
-    
     return exchange_data
-    
+
+def ex_loop():
+    while True:
+        get_exchange_data()
+        sleep(200)
+
 # initial query
 get_exchange_data(False)
+Thread(target=ex_loop).start()
 
 @app.route('/')
 def index():
-    get_exchange_data()
     return render_template('index.html', exdata=exchange_data, currencies=currencies)
 
 @app.route('/exdata.json')
