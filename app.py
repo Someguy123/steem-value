@@ -3,9 +3,8 @@ import os
 from datetime import datetime, timedelta
 from exchanges import get_target_value
 from decimal import Decimal, ROUND_DOWN
-from threading import Thread
+from threading import Thread, allocate_lock
 from time import sleep
-from thread import allocate_lock
 
 app = Flask(__name__)
 
