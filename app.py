@@ -5,6 +5,7 @@ from exchanges import get_target_value
 from decimal import Decimal, ROUND_DOWN
 from threading import Thread
 from time import sleep
+from thread import allocate_lock
 
 app = Flask(__name__)
 
@@ -27,7 +28,7 @@ currencies = {
     'cny': 'Chinese Yuan (CNY)'
 }
 
-def get_exchange_data(expire_check=True):
+def _get_exchange_data(expire_check=True):
     global exchange_data, last_update
     expire_date = last_update + timedelta(minutes=5)
     # not expired
@@ -56,6 +57,14 @@ def get_exchange_data(expire_check=True):
     last_update = datetime.utcnow()
     return exchange_data
 
+get_exchange_lock = allocate_lock()
+def get_exchange_data(expire_check=True):
+    global get_exchange_lock
+    get_exchange_lock.acquire()
+    retval = get_exchange_data(expire_check=expire_check)
+    get_exchange_lock.release()    
+    return retval
+    
 def ex_loop():
     while True:
         get_exchange_data()
