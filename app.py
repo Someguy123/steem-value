@@ -61,7 +61,7 @@ get_exchange_lock = allocate_lock()
 def get_exchange_data(expire_check=True):
     global get_exchange_lock
     get_exchange_lock.acquire()
-    retval = get_exchange_data(expire_check=expire_check)
+    retval = _get_exchange_data(expire_check=expire_check)
     get_exchange_lock.release()    
     return retval
     
@@ -80,6 +80,7 @@ def index():
 
 @app.route('/exdata.json')
 def exchangedata():
+    get_exchange_data()
     return jsonify(exchange_data)
 
 if __name__ == '__main__':
