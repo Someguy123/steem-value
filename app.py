@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timedelta
 from exchanges import get_target_value
 from decimal import Decimal, ROUND_DOWN
-from threading import Thread, allocate_lock
+from threading import Thread, Lock
 from time import sleep
 
 app = Flask(__name__)
@@ -56,7 +56,7 @@ def _get_exchange_data(expire_check=True):
     last_update = datetime.utcnow()
     return exchange_data
 
-get_exchange_lock = allocate_lock()
+get_exchange_lock = Lock()
 def get_exchange_data(expire_check=True):
     global get_exchange_lock
     get_exchange_lock.acquire()
