@@ -71,7 +71,6 @@ def index():
 
 @app.route('/exdata.json')
 def exchangedata():
-    get_exchange_data()
     return jsonify(exchange_data)
 
 if __name__ == '__main__':
