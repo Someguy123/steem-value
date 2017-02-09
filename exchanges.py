@@ -81,7 +81,30 @@ class HuobiAdapter(CacheAdapter):
         if 'ticker' in j and 'last' in j['ticker']:
             return Decimal(str(j['ticker']['last']))
         raise Exception('error reading ticker data from huobi')
-             
+
+class BittrexAdapter(CacheAdapter):
+    def _get_price(self, pair):
+        p = pair.split('_')
+        pair = '{}-{}'.format(p[0], p[1])
+        ticker_url = 'https://bittrex.com/api/v1.1/public/getticker?market='+pair;
+        r = self.s.get(ticker_url)
+        j = r.json()
+        if 'result' in j and 'Last' in j['result']:
+            return Decimal(str(j['result']['Last']))
+        raise Exception('error reading ticker data from bittrex')
+
+class LiquiAdapter(CacheAdapter):
+    def _get_price(self, pair):
+        # Liqui flips, e.g. btc_gbg = gbg_btc
+        pair_cut = list(pair.split('_'))
+        pair = '{1}_{0}'.format(*pair_cut)
+        ticker_url = 'https://api.liqui.io/api/3/ticker/'+pair;
+        r = self.s.get(ticker_url)
+        j = r.json()
+        if pair in j and 'last' in j[pair]:
+            return Decimal(str(j[pair]['last']))
+        raise Exception('error reading ticker data from liqui')
+
 # avoid initializing an adapter more than once
 ADAPTERS = {}
 
@@ -91,10 +114,13 @@ PAIRS = {
     'eur_btc': BTCEAdapter,
     'usd_ltc': BTCEAdapter,
     'btc_ltc': BTCEAdapter,
+    'rur_btc': BTCEAdapter,
     'btc_eth': BTCEAdapter,
     'btc_sbd': PoloniexAdapter,
     'btc_steem': PoloniexAdapter,
-    'cny_btc': HuobiAdapter
+    'cny_btc': HuobiAdapter,
+    'btc_golos': BittrexAdapter,
+    'btc_gbg': LiquiAdapter
 }
 
 

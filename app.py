@@ -24,7 +24,10 @@ currencies = {
     'ltc': 'LTC',
     'usd': 'USD',
     'eur': 'EUR',
-    'cny': 'Chinese Yuan (CNY)'
+    'cny': 'Chinese Yuan (CNY)',
+    'golos': 'GOLOS (ГОЛОС)',
+    'gbg': 'Gold Backed GOLOS (GBG) (ЗОЛОТОЙ)',
+    'rur': 'Russian Rubles (RUB)',
 }
 
 def _get_exchange_data(expire_check=True):
