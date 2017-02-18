@@ -138,14 +138,14 @@
       amount = parseFloat(this.from_amount);
       console.log(amount);
       if (isNaN(amount) || isNaN(price)) return 0;
-      return (price * amount).toPrecision(4);
+      return (price * amount).toFixed(4);
     }
     if(pair_reverse in exdata) {
       var price = parseFloat(exdata[pair_reverse])
       amount = parseFloat(this.from_amount);
       console.log(amount);
       if (isNaN(amount) || isNaN(price)) return 0;
-      return ((1 / price) * amount).toPrecision(4);
+      return ((1 / price) * amount).toFixed(4);
     }
     return 0;
   }
