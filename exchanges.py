@@ -116,8 +116,8 @@ PAIRS = {
     'btc_ltc': BTCEAdapter,
     'rur_btc': BTCEAdapter,
     'btc_eth': BTCEAdapter,
-    'btc_sbd': PoloniexAdapter,
-    'btc_steem': PoloniexAdapter,
+    'btc_sbd': BittrexAdapter,
+    'btc_steem': BittrexAdapter,
     'cny_btc': HuobiAdapter,
     'btc_golos': BittrexAdapter,
     'btc_gbg': LiquiAdapter
