@@ -94,7 +94,7 @@
 
         <div class="row">
           <div class="col-12 horizontal-align worth">
-            <strong>is worth</strong>
+            <strong>is worth <a href="#" v-on:click="flip">(flip)</a></strong>
           </div>
         </div>
 
@@ -128,6 +128,7 @@
   <script>
   window.exdata = {{ exdata|safe }};
   window.currencies = {{ currencies|safe }}
+
   function convert() {
     // try to find a pair
     var pair = this.from+'_'+this.to,
@@ -169,6 +170,16 @@
     computed: {
       to_amount: convert,
       to_values: convert_all
+    },
+    methods: {
+      flip: function() {
+        console.log('flipping');
+        var x = this.from;
+        var y = this.to;
+        this.from_amount = this.to_amount;
+        this.to = x;
+        this.from = y;
+      }
     }
   })
   </script>
