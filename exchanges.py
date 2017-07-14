@@ -10,6 +10,8 @@ import json
 #
 
 
+getcontext().prec = 8
+
 from werkzeug.contrib.cache import SimpleCache
 cache = SimpleCache()
 

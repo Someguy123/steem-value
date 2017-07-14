@@ -2,11 +2,13 @@ from flask import Flask, jsonify, render_template
 import os
 from datetime import datetime, timedelta
 from exchanges import get_target_value
-from decimal import Decimal, ROUND_DOWN
+from decimal import Decimal, ROUND_DOWN, getcontext
 from threading import Thread, Lock
 from time import sleep
 
 app = Flask(__name__)
+
+getcontext().prec = 8
 
 #
 # SteemValue
@@ -39,7 +41,7 @@ def _get_exchange_data(expire_check=True):
         print('Getting cached data')
         return exchange_data
     print('Cache not found or expired. Querying exchanges.')
-    gtv = lambda x,y: str(get_target_value(x,y).quantize(Decimal('.0001'), rounding=ROUND_DOWN))
+    gtv = lambda x,y: str(get_target_value(x,y).quantize(Decimal('.000001'), rounding=ROUND_DOWN))
     # iterate over the currencies, and build matching pairs for every other
     # prevents any overlap/duplication, and allows fast currency adding
     for c in currencies:
