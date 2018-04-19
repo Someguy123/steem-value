@@ -1,6 +1,8 @@
 import requests
 from decimal import Decimal, getcontext
 import json
+from adapters import *
+
 # from django.core.cache import cache
 
 #
@@ -12,107 +14,13 @@ import json
 
 getcontext().prec = 8
 
-from werkzeug.contrib.cache import SimpleCache
-cache = SimpleCache()
-
-# works similar to django's, modified for flask caching
-def get_or_set(key, func, serialize=None):
-    c = cache.get(key)
-    if c is None:
-        data = func()
-        # print('setting key: ', key, data)
-        if serialize == 'object': dataser = json.dumps(data)
-        if serialize == 'decimal': dataser = str(data)
-        cache.set(key, dataser)
-        return data
-    if serialize == 'object': c = json.loads(c)  
-    if serialize == 'decimal': c = Decimal(str(c))
-    return c
-
-class CacheAdapter(object):
-    s = requests.session()
-    
-    def get_price(self, pair):
-        self.pair = pair
-        return get_or_set('price:'+pair, self._get_cache_price, 'decimal')
-
-    def _get_cache_price(self):
-        return self._get_price(self.pair)
-
-    def _get_price(self, pair):
-        raise NotImplemented('Please define _get_price in your adapter!')
-
-
-class PoloniexAdapter(CacheAdapter):
-    def _get_price(self, pair):
-        pair = self.pair
-        pair = pair.upper()
-        j = get_or_set('polodata', self.get_polo_data, 'object')
-        # print('polo data', j)
-        if pair in j and 'last' in j[pair]:
-            return Decimal(str(j[pair]['last']))
-
-        raise Exception('ticker error, or pair not found on exchange')
-     
-    def get_polo_data(self):
-        r = self.s.get('https://poloniex.com/public?command=returnTicker')
-        return r.json()
-    
-
-
-class BTCEAdapter(CacheAdapter):
-    def _get_price(self, pair):
-        if pair.split('_')[1] not in ['usd', 'eur', 'gbp', 'rub']:
-            # btc-e is backwards for altcoins, so flip the pair!
-            pair_cut = list(pair.split('_'))
-            pair = '{1}_{0}'.format(*pair_cut)
-        ticker_url = 'https://btc-e.com/api/2/{}/ticker'.format(pair)
-        r = self.s.get(ticker_url)
-        j = r.json()
-        if 'ticker' in j and 'last' in j['ticker']:
-            return Decimal(str(j['ticker']['last']))
-        raise Exception('error reading ticker data from btc-e')
-
-class HuobiAdapter(CacheAdapter):
-    def _get_price(self, pair):
-        p = pair.split('_')
-        if p[0] != 'cny': raise PairNotFound('Huobi only does CNY')
-        ticker_url = 'https://api.huobi.com/staticmarket/ticker_{}_json.js'.format(p[1])
-        r = self.s.get(ticker_url)
-        j = r.json()
-        if 'ticker' in j and 'last' in j['ticker']:
-            return Decimal(str(j['ticker']['last']))
-        raise Exception('error reading ticker data from huobi')
-
-class BittrexAdapter(CacheAdapter):
-    def _get_price(self, pair):
-        p = pair.split('_')
-        pair = '{}-{}'.format(p[0], p[1])
-        ticker_url = 'https://bittrex.com/api/v1.1/public/getticker?market='+pair;
-        r = self.s.get(ticker_url)
-        j = r.json()
-        if 'result' in j and 'Last' in j['result']:
-            return Decimal(str(j['result']['Last']))
-        raise Exception('error reading ticker data from bittrex')
-
-class LiquiAdapter(CacheAdapter):
-    def _get_price(self, pair):
-        # Liqui flips, e.g. btc_gbg = gbg_btc
-        pair_cut = list(pair.split('_'))
-        pair = '{1}_{0}'.format(*pair_cut)
-        ticker_url = 'https://api.liqui.io/api/3/ticker/'+pair;
-        r = self.s.get(ticker_url)
-        j = r.json()
-        if pair in j and 'last' in j[pair]:
-            return Decimal(str(j[pair]['last']))
-        raise Exception('error reading ticker data from liqui')
 
 # avoid initializing an adapter more than once
 ADAPTERS = {}
 
 # which adapter can get us the price for a certain pair?
 PAIRS = {
-    'usd_btc': BTCEAdapter,
+    'usd_btc': PoloniexAdapter,
     'eur_btc': BTCEAdapter,
     'usd_ltc': BTCEAdapter,
     'btc_ltc': BTCEAdapter,
@@ -122,7 +30,7 @@ PAIRS = {
     'btc_steem': BittrexAdapter,
     'cny_btc': HuobiAdapter,
     'btc_golos': BittrexAdapter,
-    'btc_gbg': LiquiAdapter
+    'btc_gbg': BittrexAdapter
 }
 
 

@@ -27,7 +27,7 @@ currencies = {
     'ltc': 'Litecoin (LTC)',
     'usd': 'US Dollar (USD)',
     'eur': 'Euros (EUR)',
-    'cny': 'Chinese Yuan (CNY)',
+    # 'cny': 'Chinese Yuan (CNY)',
     'golos': 'GOLOS (ГОЛОС)',
     'gbg': 'Gold Backed GOLOS (GBG) (ЗОЛОТОЙ)',
     'rur': 'Russian Rubles (RUB)',
@@ -54,9 +54,20 @@ def _get_exchange_data(expire_check=True):
             # can do it's own thing
             if rpair in exchange_data: continue
             try:
-                exchange_data[pair] = gtv(c,p)
+                # print('c is', c)
+                # print('p is', p)
+                # print('target value', repr(get_target_value(c,p)))
+                # exchange_data[pair] = gtv(c,p)
+                tv = get_target_value(c,p)
+                # print('target value:', tv)
+                if len(str(tv).split('.')[1]) < 6:
+                    tvr = tv.quantize(Decimal('.01'), rounding=ROUND_DOWN)                    
+                else:
+                    tvr = tv.quantize(Decimal('.000001'), rounding=ROUND_DOWN)
+                # print('quantized target', tvr)
+                exchange_data[pair] = str(tvr)
             except Exception as e:
-                print('ERROR: ', type(e), str(e))
+                print('ERROR: ', p, type(e), str(e))
                 continue
     
     last_update = datetime.utcnow()
