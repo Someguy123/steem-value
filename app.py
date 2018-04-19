@@ -31,6 +31,8 @@ currencies = {
     'golos': 'GOLOS (ГОЛОС)',
     'gbg': 'Gold Backed GOLOS (GBG) (ЗОЛОТОЙ)',
     'rur': 'Russian Rubles (RUB)',
+    'xzc': 'ZCoin (XZC)',
+    'sys': 'SysCoin (SYS)',    
 }
 
 def _get_exchange_data(expire_check=True):
