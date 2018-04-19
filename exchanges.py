@@ -30,7 +30,9 @@ PAIRS = {
     'btc_steem': BittrexAdapter,
     'cny_btc': HuobiAdapter,
     'btc_golos': BittrexAdapter,
-    'btc_gbg': BittrexAdapter
+    'btc_gbg': BittrexAdapter,
+    'btc_xzc': BittrexAdapter,
+    'btc_sys': BittrexAdapter,
 }
 
 
