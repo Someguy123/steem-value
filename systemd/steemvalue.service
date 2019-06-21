@@ -1,0 +1,12 @@
+[Unit]
+Description=SteemValue
+After=network.target
+
+[Service]
+Type=simple
+User=steemvalue
+ExecStart=/usr/bin/env python3 /home/steemvalue/steem-value/app.py
+Restart=always
+Environment=PORT=3045 PYTHONUNBUFFERED=0
+RestartSec=30
+StandardOutput=syslog
