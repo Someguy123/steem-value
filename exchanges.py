@@ -1,5 +1,6 @@
 import requests
 from decimal import Decimal, getcontext
+from exceptions import PairNotFound
 import json
 from adapters import *
 
@@ -12,7 +13,8 @@ from adapters import *
 #
 
 
-getcontext().prec = 8
+getcontext().prec = 40
+
 
 
 # avoid initializing an adapter more than once
@@ -20,15 +22,16 @@ ADAPTERS = {}
 
 # which adapter can get us the price for a certain pair?
 PAIRS = {
-    'usd_btc': PoloniexAdapter,
-    'eur_btc': BTCEAdapter,
-    'usd_ltc': BTCEAdapter,
-    'btc_ltc': BTCEAdapter,
-    'rur_btc': BTCEAdapter,
-    'btc_eth': BTCEAdapter,
+    # 'usd_btc': PoloniexAdapter,
+    'usd_btc': HuobiAdapter,
+#    'eur_btc': BTCEAdapter,
+#    'usd_ltc': BTCEAdapter,
+    'btc_ltc': BittrexAdapter,
+#    'rur_btc': BTCEAdapter,
+    'btc_eth': BittrexAdapter,
     'btc_sbd': BittrexAdapter,
     'btc_steem': BittrexAdapter,
-    'cny_btc': HuobiAdapter,
+    'btc_eos': HuobiAdapter,
     'btc_golos': BittrexAdapter,
     'btc_gbg': BittrexAdapter,
     'btc_xzc': BittrexAdapter,
@@ -50,7 +53,7 @@ def get_pair_value(pair, invert=False) -> Decimal:
         if not invert:
             return get_pair_value(pair, invert=True)
         # if we already tried inverting, give up.
-        raise PairNotFound('pair was not found')
+        raise PairNotFound('pair {} was not found'.format(pair))
 
     # initialize adapter if it isn't already
     adp_name = PAIRS[pair].__name__
@@ -101,5 +104,3 @@ def get_target_value(coin, target='usd') -> Decimal:
     return (Decimal('1') / btc_price) * btc_target_price
 
 
-class PairNotFound(BaseException):
-    pass

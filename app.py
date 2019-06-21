@@ -2,13 +2,19 @@ from flask import Flask, jsonify, render_template
 import os
 from datetime import datetime, timedelta
 from exchanges import get_target_value
+from exceptions import PairNotFound
 from decimal import Decimal, ROUND_DOWN, getcontext
 from threading import Thread, Lock
 from time import sleep
+import logging
+
+logging.basicConfig()
+
+log = logging.getLogger()
 
 app = Flask(__name__)
 
-getcontext().prec = 8
+getcontext().prec = 40
 
 #
 # SteemValue
@@ -21,16 +27,16 @@ exchange_data = {}
 
 currencies = {
     'btc': 'Bitcoin',
+    'eos': 'EOS (eosio.token)',
     'sbd': 'Steem Dollars (SBD)',
     'steem': 'STEEM',
     'eth': 'Ethereum (ETH)',
     'ltc': 'Litecoin (LTC)',
     'usd': 'US Dollar (USD)',
-    'eur': 'Euros (EUR)',
-    # 'cny': 'Chinese Yuan (CNY)',
-    'golos': 'GOLOS (ГОЛОС)',
-    'gbg': 'Gold Backed GOLOS (GBG) (ЗОЛОТОЙ)',
-    'rur': 'Russian Rubles (RUB)',
+    # 'eur': 'Euros (EUR)',
+    #'golos': 'GOLOS (ГОЛОС)',
+    #'gbg': 'Gold Backed GOLOS (GBG) (ЗОЛОТОЙ)',
+    #'rur': 'Russian Rubles (RUB)',
     'xzc': 'ZCoin (XZC)',
     'sys': 'SysCoin (SYS)',    
 }
@@ -61,15 +67,15 @@ def _get_exchange_data(expire_check=True):
                 # print('target value', repr(get_target_value(c,p)))
                 # exchange_data[pair] = gtv(c,p)
                 tv = get_target_value(c,p)
-                # print('target value:', tv)
-                if len(str(tv).split('.')[1]) < 6:
-                    tvr = tv.quantize(Decimal('.01'), rounding=ROUND_DOWN)                    
-                else:
-                    tvr = tv.quantize(Decimal('.000001'), rounding=ROUND_DOWN)
+                log.warning('target value for %s_%s is: %f', c, p, tv)
+                # if len(str(tv).split('.')[1]) < 6:
+                    # tvr = tv.quantize(Decimal('.01'), rounding=ROUND_DOWN)                    
+                # else:
+                tvr = tv.quantize(Decimal('.000001'), rounding=ROUND_DOWN)
                 # print('quantized target', tvr)
                 exchange_data[pair] = str(tvr)
             except Exception as e:
-                print('ERROR: ', p, type(e), str(e))
+                log.exception('ERROR: %s %s %s', p, type(e), str(e))
                 continue
     
     last_update = datetime.utcnow()

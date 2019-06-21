@@ -24,5 +24,5 @@ class BittrexAdapter(CacheAdapter):
         j = r.json()
         print('bittrex', j)
         if 'result' in j and 'Last' in j['result']:
-            return Decimal(str(j['result']['Last']))
+            return Decimal(j['result']['Last'])
         raise Exception('error reading ticker data from bittrex')
