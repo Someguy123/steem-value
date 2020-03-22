@@ -29,6 +29,8 @@ currencies = {
     'btc': 'Bitcoin',
     'eos': 'EOS (eosio.token)',
     'sbd': 'Steem Dollars (SBD)',
+    'hbd': 'Hive Dollars (HBD)',
+    'hive': 'HIVE',
     'steem': 'STEEM',
     'eth': 'Ethereum (ETH)',
     'ltc': 'Litecoin (LTC)',

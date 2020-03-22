@@ -31,6 +31,8 @@ PAIRS = {
     'btc_eth': BittrexAdapter,
     'btc_sbd': BittrexAdapter,
     'btc_steem': BittrexAdapter,
+    'btc_hive': BittrexAdapter,
+    'btc_hbd': BittrexAdapter,
     'btc_eos': HuobiAdapter,
     'btc_golos': BittrexAdapter,
     'btc_gbg': BittrexAdapter,
