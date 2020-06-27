@@ -87,7 +87,7 @@
           </div>
           <div class="col-6">
             <select v-model="from">
-              <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>
+              <option v-for="(k,v) in currencies" value="{{ '{{ v[0] }}' }}">{{ '{{ v[1] }}' }}</option>
             </select>
           </div>
         </div>
@@ -104,7 +104,7 @@
           </div>
           <div class="col-6">
             <select v-model="to">
-              <option v-for="(k,v) in currencies" value="{{ '{{ k }}' }}">{{ '{{ v }}' }}</option>
+              <option v-for="(k,v) in currencies" value="{{ '{{ v[0] }}' }}">{{ '{{ v[1] }}' }}</option>
             </select>
           </div>
         </div>
@@ -112,12 +112,13 @@
         <div style="float:right">
             <strong>{{ '{{ from_amount }}' }} {{ '{{ from.toUpperCase() }}' }} is also worth:</strong>
             <p v-for="(k,v) in to_values">
-                <strong>{{ '{{ currencies[k] }}' }}</strong>
+                <strong>{{ '{{ currency_map[k] }}' }}</strong>
                 {{ '{{ v }}' }}
             </p>
         </div>
 
-        <p class="text-center"><a href="/exdata.json">Exchange data</a> was retrieved from Poloniex, Huobi, Bittrex, Liqui and BTC-e no more than 5 minutes ago</p>
+        <p class="text-center"><a href="/exdata.json">Exchange data</a> was retrieved from Binance, Bittrex, Kraken and
+            CoinGecko no more than 5 minutes ago (last updated {{ '{{ last_update }}' }})</p>
         <p class="text-center">Crafted with <span class="heart"></span> by <a href="https://steemit.com/@someguy123">@Someguy123</a><!-- and designed by <a href="#">novium</a>--></p>
       </div>
     </div>
@@ -128,6 +129,7 @@
   <script>
   window.exdata = {{ exdata|safe }};
   window.currencies = {{ currencies|safe }}
+  window.currency_map = {{ currency_map|safe }}
   function rnd(price,amount) {
     var pa = (price * amount);
     if(pa < 0.0001) return pa.toFixed(8)
@@ -156,9 +158,9 @@
   }
     function convert_all() {
         var conmap = {}
-        for(var v in currencies) {
-            if (this.from == v) continue;
-            conmap[v] = convert.bind({to: v, from: this.from,from_amount: this.from_amount})()
+        for(var v of currencies) {
+            if (this.from == v[0]) continue;
+            conmap[v[0]] = convert.bind({to: v[0], from: this.from,from_amount: this.from_amount})()
         }
         return conmap
     }
@@ -166,7 +168,9 @@
     el: '#app',
     data: {
       currencies: currencies,
-      from: 'sbd',
+      currency_map: currency_map,
+      last_update: "{{ last_update }}",
+      from: 'hive',
       from_amount: 1,
       to: "usd"
       // to_amount: convert
