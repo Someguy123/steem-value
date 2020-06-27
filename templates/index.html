@@ -120,6 +120,10 @@
         <p class="text-center"><a href="/exdata.json">Exchange data</a> was retrieved from Binance, Bittrex, Kraken and
             CoinGecko no more than 5 minutes ago (last updated {{ '{{ last_update }}' }})</p>
         <p class="text-center">Crafted with <span class="heart"></span> by <a href="https://steemit.com/@someguy123">@Someguy123</a><!-- and designed by <a href="#">novium</a>--></p>
+        <p class="text-center">Did you know? You can pre-fill the form data using a link such as: <br/>
+            <a href="https://value.steem.network/?from=btc&to=gbp&amount=0.0123">
+                https://value.steem.network/?from=btc&to=gbp&amount=0.0123
+            </a>
       </div>
     </div>
   </div>
@@ -170,9 +174,9 @@
       currencies: currencies,
       currency_map: currency_map,
       last_update: "{{ last_update }}",
-      from: 'hive',
-      from_amount: 1,
-      to: "usd"
+      from: '{{ default_from }}',
+      from_amount: {{ default_amount }},
+      to: "{{ default_to }}"
       // to_amount: convert
     },
     computed: {

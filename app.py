@@ -3,7 +3,7 @@ import asyncio
 import os
 import logging
 import nest_asyncio
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from datetime import datetime, timedelta
 from privex.helpers import DictObject, env_int, env_cast
 # from exchanges import get_target_value
@@ -23,6 +23,10 @@ nest_asyncio.apply()
 
 CACHE_TIMEOUT = env_int('CACHE_TIMEOUT', 300)
 LOOP_SLEEP = env_cast('LOOP_SLEEP', float, 60.0)
+
+DEFAULT_FROM = env('DEFAULT_FROM', 'hive')
+DEFAULT_TO = env('DEFAULT_TO', 'usd')
+DEFAULT_AMOUNT = env_cast('DEFAULT_AMOUNT', float, 1)
 
 LogHelper(level=logging.ERROR, handler_level=logging.ERROR)
 _lh = LogHelper('steemvalue')
@@ -147,9 +151,13 @@ Thread(target=ex_loop).start()
 
 @app.route('/')
 def index():
+    default_from = request.args.get('from', DEFAULT_FROM).lower()
+    default_to = request.args.get('to', DEFAULT_TO).lower()
+    default_amount = float(request.args.get('amount', DEFAULT_AMOUNT))
     return render_template(
         'index.html', exdata=STORE.exchange_data, currencies=currency_list, currency_map=currencies,
-        last_update=str(STORE.last_update).split('.')[0] + ' UTC-0'
+        last_update=str(STORE.last_update).split('.')[0] + ' UTC-0',
+        default_amount=default_amount, default_from=default_from, default_to=default_to
     )
 
 
