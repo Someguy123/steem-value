@@ -60,6 +60,7 @@ currencies = {
     'btc': 'Bitcoin',
     'bch': 'Bitcoin Cash (BCH)',
     'bsv': 'Bitcoin SV (BSV)',
+    'blurt': 'Blurt',
     'bts': 'Bitshares (BTS)',
     'dash': 'DASH',
     'doge': 'Dogecoin (DOGE)',
