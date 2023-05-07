@@ -1,4 +1,4 @@
-Flask==0.11.*
+Flask==2.2.5*
 requests
 Werkzeug==0.11.*
 privex-exchange>=0.1.0
