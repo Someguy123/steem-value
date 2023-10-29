@@ -1,6 +1,6 @@
 Flask==0.11.*
 requests
-Werkzeug==0.11.*
+Werkzeug==3.0.1*
 privex-exchange>=0.1.0
 privex-helpers>=2.13.0
 nest_asyncio
